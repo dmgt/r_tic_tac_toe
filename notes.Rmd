@@ -1,0 +1,38 @@
+---
+title: "Tic Tac Toe"
+output: github_notebook
+---
+
+## Notes
+- Taking in input from the prompt is not a functionality I have used before in R, but it definately exists (see eg packages built to provide in-IDE tutorials from an R package such as `swirl`)
+
+### R features
+- https://www.datamentor.io/r-programming/examples/user-input/
+- https://stackoverflow.com/questions/33425727/calling-user-inputs-prompted-through-one-r-function-in-a-second-r-function 
+
+### Tic tac toe and deadling with user input in other languages
+- https://towardsdatascience.com/tic-tac-toe-creating-unbeatable-ai-with-minimax-algorithm-8af9e52c1e7d
+- https://stackoverflow.com/questions/23294658/asking-the-user-for-input-until-they-give-a-valid-response
+
+### Sample function 
+```{r}
+# Sample function 
+prompt_user <- function()  {
+  n <- (readline("What's your move? Please enter a number from 1-9: "))
+  n <- as.numeric(n)
+  
+  list(n=n)
+}
+
+tic_tac_toe <- function ()  {
+  inputs <- prompt_user()
+  if (inputs$n > 5)  {
+    print("Input >5")
+  }
+  else  {
+    print("Input <= 5")
+  }
+  inputs$n
+}
+```
+
