@@ -71,7 +71,6 @@ initial_prompt <- function()  {
 tic_tac_toe <- function ()  {
   
   #Enumerate winning combinations of positions
-  winning_moves <- list(c(1,2,3), c(4,5,6), c(7,8,9))
   
   # Initialize to store moves from each player
   player_1_moves <- c()
@@ -79,9 +78,9 @@ tic_tac_toe <- function ()  {
   
   inputs <- initial_prompt()
   
-  player_1_moves <- c(player_1_moves, inputs$n)
+  player_1_moves <- inputs$n
   
-  print(glue("Moves from player 1 so far:   {player_1_moves}, type of player1_moves = {class(player_1_moves)}"))
+  print(glue("Player 1 moves so far: {player_1_moves}"))
 }
 ```
 
@@ -90,14 +89,27 @@ tic_tac_toe <- function ()  {
 # One straightforward  way to do this seems to be as a vector, with the character strings of all possible results
 # Use `permn` to genertae permutations
 
-vector_of_winning_moves <- c("123", "132", "312", "321", "231", "213")
+vector_of_winning_moves <- c("123", "132", "312", "321", "231", "213",  # 3 horizontal wins
+                             "456", "465", "645", "654", "564", "546",
+                             "789", "798", "978", "987", "897", "879",  
+                             "147", "174", "714", "741", "471", "417",  # 3 vertical wins
+                             "258", "285", "825", "852", "582", "528",
+                             "369", "396", "936", "963", "693", "639",
+                             "159", "195", "915", "951", "591", "519",  # 2 diagonal wins
+                             "357", "375", "735", "753", "573", "537")   
+                             
 
-test_vector <- c("123")
+test_vector1 <- c("123")
+test_vector2 <- c("132")
+test_vector3 <- c("537")
+test_vector_short <- c("12")
+test_vector_mismatch <-c("157")
 
-test_vector %in% vector_of_winning_moves
-
-
-
+test_vector1 %in% vector_of_winning_moves
+test_vector2 %in% vector_of_winning_moves
+test_vector3 %in% vector_of_winning_moves
+test_vector_short %in% vector_of_winning_moves
+test_vector_mismatch %in% vector_of_winning_moves
 ```
 
 
