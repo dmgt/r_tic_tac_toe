@@ -1,7 +1,14 @@
 ---
 title: "Tic Tac Toe"
 output: github_notebook
+editor_options: 
+  chunk_output_type: console
 ---
+
+```{r setup}
+library(glue)
+```
+
 
 ## Notes
 - Taking in input from the prompt is not a functionality I have used before in R, but it definately exists (see eg packages built to provide in-IDE tutorials from an R package such as `swirl`)
@@ -10,29 +17,88 @@ output: github_notebook
 - https://www.datamentor.io/r-programming/examples/user-input/
 - https://stackoverflow.com/questions/33425727/calling-user-inputs-prompted-through-one-r-function-in-a-second-r-function 
 
+- Existing R package (haven't looked at the code) https://github.com/kota7/tictactoe 
+- Implementation that includes a way to code  grid to plot: https://www.robert-hickman.eu/post/r-inforcement_learning_one/ 
+
 ### Tic tac toe and deadling with user input in other languages
 - https://towardsdatascience.com/tic-tac-toe-creating-unbeatable-ai-with-minimax-algorithm-8af9e52c1e7d
 - https://stackoverflow.com/questions/23294658/asking-the-user-for-input-until-they-give-a-valid-response
 
-### Sample function 
+
+## Sample function 
 ```{r}
 # Sample function 
-prompt_user <- function()  {
-  n <- (readline("What's your move? Please enter a number from 1-9: "))
+initial_prompt <- function()  {
+  print(glue("
+                                                                     
+             Welcome to tic-tac-toe!
+             
+             This is a game for two players. The goal is to get three x's or o's in a row on the board!
+
+             You can take turns entering your move in this window. 
+             There are a total of 9 positions on the board, as show below: 
+                
+            +---+---+---+
+            | 1 | 2 | 3 |
+            +---+---+---+
+            | 4 | 5 | 6 |
+            +---+---+---+
+            | 7 | 8 | 9 |
+            +---+---+---+"
+                         
+             ))
+  
+  
+  print(glue("Let's start the game! The board is blank, and ready for the first player: 
+             
+             +--+--+--+
+             |  |  |  |
+             +--+--+--+
+             |  |  |  |
+             +--+--+--+
+             |  |  |  |
+             +--+--+--+
+             
+             "))
+  
+  n <- (readline("Player 1, what's your move? Please enter a number from 1-9: "))
   n <- as.numeric(n)
   
   list(n=n)
 }
 
 tic_tac_toe <- function ()  {
-  inputs <- prompt_user()
-  if (inputs$n > 5)  {
-    print("Input >5")
-  }
-  else  {
-    print("Input <= 5")
-  }
-  inputs$n
+  
+  # Initialize to store moves from each player
+  player_1_moves <- c()
+  player_2_moves <- c()
+  
+  inputs <- initial_prompt()
+  
+  player_1_moves <- c(player_1_moves, inputs$n)
+  
+  print(glue("Moves from player 1 so far:   {player_1_moves}"))
 }
 ```
+
+## Steps and desired feautures
+
+- Two humans play against each other
+- A message when the function is first called: eg  "Welcome to tic tac toe! This is a game for two players. The goal is to get three x's or o's in a row!
+
+You can take turns entering your move in this window. There are a total of 9 positions on the board, as show below: 
+"
+- Optional - flip a coin to decide who goes first
+
+- Initialize sets to store moves from each player
+
+- A new message that shows the state of the board and promps one player to enter their move (from 1 to 9)
+
+- The number the first player enters is added to their set of moves
+
+- State of board is updated, and the second player is prompted to enter their move
+
+- Loop three steps above, evaluating win conditions at each iteration
+    - There are 8 possible configurations for each player to win, which are easy to list as a set (order doesn't matter)
+
 
