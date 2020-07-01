@@ -68,19 +68,42 @@ initial_prompt <- function()  {
   list(n=n)
 }
 
+ player2_initial_prompt <- function(){
+    n <- (readline("Player 2, it's time for your first move. Please enter a number from 1-9: "))
+    n <- as.numeric(n)
+  
+  list(n=n)
+ }
+
 tic_tac_toe <- function ()  {
   
-  #Enumerate winning combinations of positions
+    # Initialize to store moves from each player
+    player_1_moves <- c()
+    player_2_moves <- c()
   
-  # Initialize to store moves from each player
-  player_1_moves <- c()
-  player_2_moves <- c()
+    #Enumerate winning combinations of positions
+    vector_of_winning_moves <- c("123", "132", "312", "321", "231", "213",  # 3 horizontal wins
+                             "456", "465", "645", "654", "564", "546",
+                             "789", "798", "978", "987", "897", "879",  
+                             "147", "174", "714", "741", "471", "417",  # 3 vertical wins
+                             "258", "285", "825", "852", "582", "528",
+                             "369", "396", "936", "963", "693", "639",
+                             "159", "195", "915", "951", "591", "519",  # 2 diagonal wins
+                             "357", "375", "735", "753", "573", "537")   
   
-  inputs <- initial_prompt()
+
   
-  player_1_moves <- inputs$n
+   inputs <- initial_prompt()
   
-  print(glue("Player 1 moves so far: {player_1_moves}"))
+   player_1_moves <- inputs$n
+  
+   print(glue("Player 1 moves so far: {player_1_moves}"))
+   
+   inputs2 <- player2_initial_prompt()
+   
+   player_2_moves <- inputs2$n
+   
+    print(glue("Player 2 moves so far: {player_2_moves}"))  
 }
 ```
 
