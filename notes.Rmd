@@ -7,6 +7,7 @@ editor_options:
 
 ```{r setup}
 library(glue)
+library(tidyverse)
 ```
 
 
@@ -69,6 +70,9 @@ initial_prompt <- function()  {
 
 tic_tac_toe <- function ()  {
   
+  #Enumerate winning combinations of positions
+  winning_moves <- list(c(1,2,3), c(4,5,6), c(7,8,9))
+  
   # Initialize to store moves from each player
   player_1_moves <- c()
   player_2_moves <- c()
@@ -77,8 +81,141 @@ tic_tac_toe <- function ()  {
   
   player_1_moves <- c(player_1_moves, inputs$n)
   
-  print(glue("Moves from player 1 so far:   {player_1_moves}"))
+  print(glue("Moves from player 1 so far:   {player_1_moves}, type of player1_moves = {class(player_1_moves)}"))
 }
+```
+
+```{r}
+# Test tracking winning moves
+# One straightforward  way to do this seems to be as a vector, with the character strings of all possible results
+# Use `permn` to genertae permutations
+
+vector_of_winning_moves <- c("123", "132", "312", "321", "231", "213")
+
+test_vector <- c("123")
+
+test_vector %in% vector_of_winning_moves
+
+
+
+```
+
+
+```{r}
+# Notes on ways to use lists and sets instead that didn't make sense
+
+# Defining as list of vectors
+winning_moves <- list(c(1,2,3), c(4,5,6), c(7,8,9), c(1,4,7), c(2,5,8), c(3,6,9), c(1,5,9), c(3,5,7))
+
+
+test_set_of_moves_1 <- list(c(3,1,2))
+
+test_set_of_moves_2 <- c(4,5,6)
+
+# Not as expected - c(4,5,6) is clearly an element in winning_moves
+test_set_of_moves_2 %in% winning_moves
+winning_moves %in% test_set_of_moves_2 
+
+test_set_of_moves_1 %in% winning_moves
+winning_moves %in% test_set_of_moves_1 
+
+
+# I thought intersect would be the way to do this, but the outputs are blank data types
+intersect(test_set_of_moves_1, winning_moves )
+intersect(winning_moves, test_set_of_moves_1 )
+
+intersect(test_set_of_moves_2, winning_moves )
+intersect(winning_moves, test_set_of_moves_2 )
+```
+
+```{r}
+# Alternate example not with numbers - why does this work with characters and not with numbers?
+check_against <- c("a", "b", "c", "d")
+
+"b" %in% check_against
+
+c("a", "c") %in% check_against
+
+
+# alternate example that also includes list - checking for element does not work
+check_against_list <- list(c("a", "b", "c"), c("d", "e", "f"), c("g", "h", "i"))
+
+# Check if "b" is in any of the lists - Works with list comprehension ("b" %in% check_against_list does not)
+# https://stackoverflow.com/questions/53086053/how-to-check-if-a-list-contains-a-certain-element-in-r 
+
+1 * sapply(check_against_list, function(x) "b" %in% x)  
+
+# Check if c("a", "b", "c") is in any of the lists 
+lapply(check_against_list, function(x) c("a", "b","c") %in% x)  
+1 * sapply(check_against_list, function(x) c("a", "b","c") %in% x)  
+
+# Check if the elements, in a different order, are in the list - also works
+lapply(check_against_list, function(x) c("c", "a","b") %in% x)  
+
+#Check if the elements, in a different order, are in the list with tidyverse syntax
+
+map_lgl(check_against_list, `%in%`, x ="b") %>% 
+    as.integer
+
+map(check_against_list, `%in%`, x = c("b", "c", "a")) %>% unlist() %>% as.numeric() %>% sum()
+
+map(check_against_list, `%in%`, x = c("b", "e", "g")) %>% unlist() %>% as.numeric() %>% sum()
+
+```
+
+_ Lists in R *are * ordered, even though they can also be named - good writeup: https://stackoverflow.com/questions/2050790/how-to-correctly-use-lists-in-r 
+- R base set operations are set up to work on vectors
+- Trying to create a tibble from vectors like this does not work and only reads the first vector: `as_tibble(c(1,2,3), c(4,5,6), c(7,8,9), c(1,4,7), c(2,5,8), c(3,6,9), c(1,5,9), c(3,5,7))`
+- sapply is a simplified version of lapply output (lapply returns a list same length as original element)
+
+- Can use combinat::permn to generate all permutations of a vector
+
+
+```{r}
+new_list_of_winning_moves <- check_against_list <- list(c("1", "2", "3"), 
+                                                        c("1", "3", "2"), 
+                                                        c("3", "1", "2"),
+                                                        c( "3", "2", "1"),
+                                                        c("2", "3", "1"),
+                                                        c("2", "1", "3"))
+
+test_vector <- c("1", "2", "3")
+
+map(new_list_of_winning_moves, `%in%`, x =test_vector) 
+
+non_matching_test_vector <- c("1", "4", "3")
+
+map(new_list_of_winning_moves, `%in%`, x =non_matching_test_vector) 
+
+
+# Try intersect
+map(new_list_of_winning_moves, function(x) intersect(x, non_matching_test_vector)) 
+
+map(new_list_of_winning_moves, function(x) intersect(x, test_vector)) 
+
+# What if make input a list of lists? Does not work as expected
+
+list_list_of_winning_moves <- list(list(c("1", "2", "3")), 
+                                   list(c("1", "3", "2")), 
+                                   list(c("3", "1", "2")),
+                                   list(c("3", "2", "1")),
+                                   list(c("2", "3", "1")),
+                                   list(c("2", "1", "3")))
+
+test_list <- c("1", "2", "3")
+
+map(list_list_of_winning_moves, `%in%`, x =test_list) 
+
+# What if make input a list of character vectors?
+
+vector_of_winning_moves <- c("123", "132", "312", "321", "231", "213")
+
+test_vector <- c("123")
+
+test_vector %in% vector_of_winning_moves
+
+
+
 ```
 
 ## Steps and desired feautures
