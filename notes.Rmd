@@ -37,32 +37,13 @@ initial_prompt <- function()  {
              This is a game for two players. The goal is to get three x's or o's in a row on the board!
 
              You can take turns entering your move in this window. 
-             There are a total of 9 positions on the board, as show below: 
+             There are a total of 9 positions on the board, as shown below:")) 
                 
-            +---+---+---+
-            | 1 | 2 | 3 |
-            +---+---+---+
-            | 4 | 5 | 6 |
-            +---+---+---+
-            | 7 | 8 | 9 |
-            +---+---+---+"
-                         
-             ))
+             plot_board()
+                        
+            
   
-  
-  print(glue("Let's start the game! The board is blank, and ready for the first player: 
-             
-             +--+--+--+
-             |  |  |  |
-             +--+--+--+
-             |  |  |  |
-             +--+--+--+
-             |  |  |  |
-             +--+--+--+
-             
-             "))
-  
-  n <- (readline("Player 1, what's your move? Please enter a number from 1-9: "))
+  n <- (readline("Player 1, what's your first move? Please enter a number from 1-9: "))
   n <- as.numeric(n)
   
   list(n=n)
@@ -106,6 +87,25 @@ tic_tac_toe <- function ()  {
     print(glue("Player 2 moves so far: {player_2_moves}"))  
 }
 ```
+
+```{r}
+# Test displaying a grid
+
+# Adapted from example that used a totally different numbering scheme https://www.robert-hickman.eu/post/r-inforcement_learning_one/
+  
+plot_board <- function() {
+  pieced <- glue_collapse(c("1", "2", "3", "4", "5", "6", "7", "8", "9"), sep = " | ")
+ 
+  board_lines <- gsub("(. \\| . \\| . )\\|( . \\| . \\| . )\\|( . \\| . \\| .)", 
+                      "\n \\1\n-----------\n\\2\n-----------\n\\3",
+                      pieced
+                      )
+  return(writeLines(board_lines))
+}
+
+
+```
+
 
 ```{r}
 # Test tracking winning moves
