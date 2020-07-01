@@ -30,6 +30,12 @@ library(tidyverse)
 ```{r}
 # Sample function 
 initial_prompt <- function()  {
+  
+      
+            #Initialize
+             player_1_moves <- c()
+             player_2_moves <- c()
+  
   print(glue("
                                                                      
              Welcome to tic-tac-toe!
@@ -37,9 +43,12 @@ initial_prompt <- function()  {
              This is a game for two players. The goal is to get three x's or o's in a row on the board!
 
              You can take turns entering your move in this window. 
-             There are a total of 9 positions on the board, as shown below:")) 
+             There are a total of 9 positions on the board, as shown below:
+             
+             ")) 
+        
                 
-             plot_board()
+             plot_board(player_1_moves, player_2_moves)
                         
             
   
@@ -78,13 +87,17 @@ tic_tac_toe <- function ()  {
   
    player_1_moves <- inputs$n
   
-   print(glue("Player 1 moves so far: {player_1_moves}"))
+   #print(glue("Player 1 moves so far: {player_1_moves}"))
+   
+   plot_board(player_1_moves, player_2_moves)
    
    inputs2 <- player2_initial_prompt()
    
    player_2_moves <- inputs2$n
    
-    print(glue("Player 2 moves so far: {player_2_moves}"))  
+   #print(glue("Player 2 moves so far: {player_2_moves}"))  
+   
+   plot_board(player_1_moves, player_2_moves)
 }
 ```
 
