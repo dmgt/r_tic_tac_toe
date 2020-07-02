@@ -11,24 +11,11 @@ library(tidyverse)
 ```
 
 
-## Notes
-- Taking in input from the prompt is not a functionality I have used before in R, but it definately exists (see eg packages built to provide in-IDE tutorials from an R package such as `swirl`)
+## Functions
 
-### R features
-- https://www.datamentor.io/r-programming/examples/user-input/
-- https://stackoverflow.com/questions/33425727/calling-user-inputs-prompted-through-one-r-function-in-a-second-r-function 
-
-- Existing R package (haven't looked at the code) https://github.com/kota7/tictactoe 
-- Implementation that includes a way to code  grid to plot: https://www.robert-hickman.eu/post/r-inforcement_learning_one/ 
-
-### Tic tac toe and deadling with user input in other languages
-- https://towardsdatascience.com/tic-tac-toe-creating-unbeatable-ai-with-minimax-algorithm-8af9e52c1e7d
-- https://stackoverflow.com/questions/23294658/asking-the-user-for-input-until-they-give-a-valid-response
-
-
-## Sample function 
+### Helper functions
 ```{r}
-# Sample function 
+
 initial_prompt <- function()  {
   
       
@@ -50,7 +37,10 @@ initial_prompt <- function()  {
                 
              plot_board(player_1_moves, player_2_moves)
                         
-            
+  print(glue("Player 1 will go first. Your plays will use the 'x' symbol. Player 2 is 'o'.
+             
+             "))
+                     
   
   n <- (readline("Player 1, what's your first move? Please enter a number from 1-9: "))
   n <- as.numeric(n)
@@ -64,47 +54,19 @@ initial_prompt <- function()  {
   
   list(n=n)
  }
-
-tic_tac_toe <- function ()  {
+ 
+midgame_prompt <- function(player_number){
+    n <- (readline(glue("Player {player_number}, what is your next move? Please enter a number from 1-9: ")))
+    n <- as.numeric(n)
   
-    # Initialize to store moves from each player
-    player_1_moves <- c()
-    player_2_moves <- c()
-  
-    #Enumerate winning combinations of positions
-    vector_of_winning_moves <- c("123", "132", "312", "321", "231", "213",  # 3 horizontal wins
-                             "456", "465", "645", "654", "564", "546",
-                             "789", "798", "978", "987", "897", "879",  
-                             "147", "174", "714", "741", "471", "417",  # 3 vertical wins
-                             "258", "285", "825", "852", "582", "528",
-                             "369", "396", "936", "963", "693", "639",
-                             "159", "195", "915", "951", "591", "519",  # 2 diagonal wins
-                             "357", "375", "735", "753", "573", "537")   
-  
-
-  
-   inputs <- initial_prompt()
-  
-   player_1_moves <- inputs$n
-  
-   #print(glue("Player 1 moves so far: {player_1_moves}"))
-   
-   plot_board(player_1_moves, player_2_moves)
-   
-   inputs2 <- player2_initial_prompt()
-   
-   player_2_moves <- inputs2$n
-   
-   #print(glue("Player 2 moves so far: {player_2_moves}"))  
-   
-   plot_board(player_1_moves, player_2_moves)
-}
+  list(n=n)
+ }
+ 
 ```
 
 ```{r}
+# Plotting the board - shows all digits if player_moves is NULL 
 # Initially adapted from example that used a v. different numbering scheme https://www.robert-hickman.eu/post/r-inforcement_learning_one/
-
-# Combine plotting teh board and transforming the digits based on user plays 
 plot_board <- function(player_1_moves, player_2_moves ) {
   
   board_numbers <- c(1:9)
@@ -125,102 +87,110 @@ plot_board <- function(player_1_moves, player_2_moves ) {
 }
 ```
 
+ 
 ```{r}
-# Test function
-plot_board(player_1_moves = c(4,5), player_2_moves = c(9,8))
+
+tic_tac_toe <- function ()  {
+  
+    # Initialize to store moves from each player
+    player_1_moves <- c()
+    player_2_moves <- c()
+  
+
+   #### First move by player 1 ####
+   inputs <- initial_prompt()
+  
+   player_1_moves <- inputs$n
+   
+   plot_board(player_1_moves, player_2_moves)
+   
+   #### First move by player 2 ####
+   inputs2 <- player2_initial_prompt()
+   
+   player_2_moves <- inputs2$n
+   
+   plot_board(player_1_moves, player_2_moves)
+   
+   
+   #### Loop with next moves by both players ####
+     
+      player1_inputs <- midgame_prompt(player_number = 1)
+   
+      p1_next_move <- player1_inputs$n
+
+      player_1_moves <- append(player_1_moves, p1_next_move)
+   
+      plot_board(player_1_moves, player_2_moves)
+   
+      evaluate_win_conditions(player_1_moves, player_2_moves) 
+      
+      player2_inputs <- midgame_prompt(player_number = 2)
+   
+      p2_next_move <- player2_inputs$n
+
+      player_2_moves <- append(player_2_moves, p2_next_move)
+   
+      plot_board(player_1_moves, player_2_moves)
+   
+      evaluate_win_conditions(player_1_moves, player_2_moves)
+    
+   
+}
 ```
 
 
 ```{r}
-# Test tracking winning moves
-# One straightforward  way to do this seems to be as a vector, with the character strings of all possible results
-# Use `permn` to genertae permutations
+evaluate_win_conditions <-function(player_1_moves, player_2_moves) {
+  
+  # Starting condition
+  continue_play <- T
 
-vector_of_winning_moves <- c("123", "132", "312", "321", "231", "213",  # 3 horizontal wins
-                             "456", "465", "645", "654", "564", "546",
-                             "789", "798", "978", "987", "897", "879",  
-                             "147", "174", "714", "741", "471", "417",  # 3 vertical wins
-                             "258", "285", "825", "852", "582", "528",
-                             "369", "396", "936", "963", "693", "639",
-                             "159", "195", "915", "951", "591", "519",  # 2 diagonal wins
-                             "357", "375", "735", "753", "573", "537")   
-                             
+  #Enumerate winning combinations of positions
+  list_of_winning_moves <- list(c(1,2,3), c(4,5,6), c(7,8,9), c(1,4,7), c(2,5,8), c(3,6,9), c(1,5,9), c(3,5,7))
+  
+  # Map return a list, map_int simplifies the output to a vector of integers
+  p1_results <- map_int(list_of_winning_moves, function(x) is.element(unlist(x), player_1_moves) %>% sum() )  
+  p2_results <- map_int(list_of_winning_moves, function(x) is.element(unlist(x), player_2_moves) %>% sum() ) 
 
-test_vector1 <- c("123")
-test_vector2 <- c("132")
-test_vector3 <- c("537")
-test_vector_short <- c("12")
-test_vector_mismatch <-c("157")
-
-test_vector1 %in% vector_of_winning_moves
-test_vector2 %in% vector_of_winning_moves
-test_vector3 %in% vector_of_winning_moves
-test_vector_short %in% vector_of_winning_moves
-test_vector_mismatch %in% vector_of_winning_moves
-```
-
-
-```{r}
-# Notes on ways to use lists and sets instead that didn't make sense
-
-# Defining as list of vectors
-winning_moves <- list(c(1,2,3), c(4,5,6), c(7,8,9), c(1,4,7), c(2,5,8), c(3,6,9), c(1,5,9), c(3,5,7))
-
-
-test_set_of_moves_1 <- list(c(3,1,2))
-
-test_set_of_moves_2 <- c(4,5,6)
-
-# Not as expected - c(4,5,6) is clearly an element in winning_moves
-test_set_of_moves_2 %in% winning_moves
-winning_moves %in% test_set_of_moves_2 
-
-test_set_of_moves_1 %in% winning_moves
-winning_moves %in% test_set_of_moves_1 
-
-
-# I thought intersect would be the way to do this, but the outputs are blank data types
-intersect(test_set_of_moves_1, winning_moves )
-intersect(winning_moves, test_set_of_moves_1 )
-
-intersect(test_set_of_moves_2, winning_moves )
-intersect(winning_moves, test_set_of_moves_2 )
+if (max(p1_results) == 3 ) {
+    continue_play <- F
+    winner <- "Player_1" 
+  } else if (max(p2_results) == 3 ){ 
+    continue_play <- F
+    winner <- "Player_2" }
+   
+  if (continue_play == F) print("Congrats {winner}, you won!") 
+  
+}
 ```
 
 ```{r}
-# Alternate example not with numbers - why does this work with characters and not with numbers?
-check_against <- c("a", "b", "c", "d")
+# Version with list comprehension
 
-"b" %in% check_against
+# is.element(c(1,2,3), c(5,3,2,1)) %>% sum()  <- get this working in list comprehension
 
-c("a", "c") %in% check_against
+# List of vectors of winning sets
+list_of_winning_moves <- list(c(1,2,3), c(4,5,6), c(7,8,9), c(1,4,7), c(2,5,8), c(3,6,9), c(1,5,9), c(3,5,7))
 
+example_moves <- c(1,2,3,4)
 
-# alternate example that also includes list - checking for element does not work
-check_against_list <- list(c("a", "b", "c"), c("d", "e", "f"), c("g", "h", "i"))
+# Test manual instance of list comprehension - correct
+is.element(unlist(list_of_winning_moves[1]), example_moves) %>% sum() 
 
-# Check if "b" is in any of the lists - Works with list comprehension ("b" %in% check_against_list does not)
-# https://stackoverflow.com/questions/53086053/how-to-check-if-a-list-contains-a-certain-element-in-r 
+# Test examples that should fail - yes, works as expected
+is.element(unlist(list_of_winning_moves[1]), c(1,2)) %>% sum()    # too short
+is.element(unlist(list_of_winning_moves[1]), c(1,2,9)) %>% sum()  # 3 plays, but not in right positions
 
-1 * sapply(check_against_list, function(x) "b" %in% x)  
+# Map examples
+# Extract the third element of each list
+map(list_of_winning_moves, 3 ) 
 
-# Check if c("a", "b", "c") is in any of the lists 
-lapply(check_against_list, function(x) c("a", "b","c") %in% x)  
-1 * sapply(check_against_list, function(x) c("a", "b","c") %in% x)  
+# Map return a list, map_int simplifies the output to a vector of integers
+results <- map_int(list_of_winning_moves, function(x) is.element(unlist(x), example_moves) %>% sum() )  
 
-# Check if the elements, in a different order, are in the list - also works
-lapply(check_against_list, function(x) c("c", "a","b") %in% x)  
-
-#Check if the elements, in a different order, are in the list with tidyverse syntax
-
-map_lgl(check_against_list, `%in%`, x ="b") %>% 
-    as.integer
-
-map(check_against_list, `%in%`, x = c("b", "c", "a")) %>% unlist() %>% as.numeric() %>% sum()
-
-map(check_against_list, `%in%`, x = c("b", "e", "g")) %>% unlist() %>% as.numeric() %>% sum()
 
 ```
+
 
 _ Lists in R *are * ordered, even though they can also be named - good writeup: https://stackoverflow.com/questions/2050790/how-to-correctly-use-lists-in-r 
 - R base set operations are set up to work on vectors
@@ -228,54 +198,8 @@ _ Lists in R *are * ordered, even though they can also be named - good writeup: 
 - sapply is a simplified version of lapply output (lapply returns a list same length as original element)
 
 - Can use combinat::permn to generate all permutations of a vector
+- Can use `purrr::map2()` to operate on 2 things eg "(data = DATA FOR ONE SPECIES, n = SAMPLE SIZE)", per https://jennybc.github.io/purrr-tutorial/ls12_different-sized-samples.html
 
-
-```{r}
-new_list_of_winning_moves <- list(c("1", "2", "3"), 
-                                  c("1", "3", "2"), 
-                                  c("3", "1", "2"),
-                                  c( "3", "2", "1"),
-                                  c("2", "3", "1"),
-                                  c("2", "1", "3"))
-
-test_vector <- c("1", "2", "3")
-
-map(new_list_of_winning_moves, `%in%`, x =test_vector) 
-
-non_matching_test_vector <- c("1", "4", "3")
-
-map(new_list_of_winning_moves, `%in%`, x =non_matching_test_vector) 
-
-
-# Try intersect
-map(new_list_of_winning_moves, function(x) intersect(x, non_matching_test_vector)) 
-
-map(new_list_of_winning_moves, function(x) intersect(x, test_vector)) 
-
-# What if make input a list of lists? Does not work as expected
-
-list_list_of_winning_moves <- list(list(c("1", "2", "3")), 
-                                   list(c("1", "3", "2")), 
-                                   list(c("3", "1", "2")),
-                                   list(c("3", "2", "1")),
-                                   list(c("2", "3", "1")),
-                                   list(c("2", "1", "3")))
-
-test_list <- c("1", "2", "3")
-
-map(list_list_of_winning_moves, `%in%`, x =test_list) 
-
-# What if make input a list of character vectors?
-
-vector_of_winning_moves <- c("123", "132", "312", "321", "231", "213")
-
-test_vector <- c("123")
-
-test_vector %in% vector_of_winning_moves
-
-
-
-```
 
 ## Steps and desired feautures
 
@@ -283,18 +207,32 @@ test_vector %in% vector_of_winning_moves
 - A message when the function is first called: eg  "Welcome to tic tac toe! This is a game for two players. The goal is to get three x's or o's in a row!
 
 You can take turns entering your move in this window. There are a total of 9 positions on the board, as show below: 
-"
+" - Done
 - Optional - flip a coin to decide who goes first
 
-- Initialize sets to store moves from each player
+- Initialize sets to store moves from each player - Done
 
-- A new message that shows the state of the board and promps one player to enter their move (from 1 to 9)
+- A new message that shows the state of the board and promps one player to enter their move (from 1 to 9) - Done
 
-- The number the first player enters is added to their set of moves
+- The number the first player enters is added to their set of moves - Done
 
-- State of board is updated, and the second player is prompted to enter their move
+- State of board is updated, and the second player is prompted to enter their move - Done
 
 - Loop three steps above, evaluating win conditions at each iteration
     - There are 8 possible configurations for each player to win, which are easy to list as a set (order doesn't matter)
 
+
+## Notes
+- Taking in input from the prompt is not a functionality I have used before in R, but it definately exists (see eg packages built to provide in-IDE tutorials from an R package such as `swirl`)
+
+### R features
+- https://www.datamentor.io/r-programming/examples/user-input/
+- https://stackoverflow.com/questions/33425727/calling-user-inputs-prompted-through-one-r-function-in-a-second-r-function 
+
+- Existing R package (haven't looked at the code) https://github.com/kota7/tictactoe 
+- Implementation that includes a way to code  grid to plot: https://www.robert-hickman.eu/post/r-inforcement_learning_one/ 
+
+### Tic tac toe and deadling with user input in other languages
+- https://towardsdatascience.com/tic-tac-toe-creating-unbeatable-ai-with-minimax-algorithm-8af9e52c1e7d
+- https://stackoverflow.com/questions/23294658/asking-the-user-for-input-until-they-give-a-valid-response
 
