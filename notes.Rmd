@@ -113,6 +113,9 @@ tic_tac_toe <- function ()  {
    
    
    #### Loop with next moves by both players ####
+   
+   #Initialize
+   continue_play <- T
      
       player1_inputs <- midgame_prompt(player_number = 1)
    
@@ -162,33 +165,6 @@ if (max(p1_results) == 3 ) {
   if (continue_play == F) print("Congrats {winner}, you won!") 
   
 }
-```
-
-```{r}
-# Version with list comprehension
-
-# is.element(c(1,2,3), c(5,3,2,1)) %>% sum()  <- get this working in list comprehension
-
-# List of vectors of winning sets
-list_of_winning_moves <- list(c(1,2,3), c(4,5,6), c(7,8,9), c(1,4,7), c(2,5,8), c(3,6,9), c(1,5,9), c(3,5,7))
-
-example_moves <- c(1,2,3,4)
-
-# Test manual instance of list comprehension - correct
-is.element(unlist(list_of_winning_moves[1]), example_moves) %>% sum() 
-
-# Test examples that should fail - yes, works as expected
-is.element(unlist(list_of_winning_moves[1]), c(1,2)) %>% sum()    # too short
-is.element(unlist(list_of_winning_moves[1]), c(1,2,9)) %>% sum()  # 3 plays, but not in right positions
-
-# Map examples
-# Extract the third element of each list
-map(list_of_winning_moves, 3 ) 
-
-# Map return a list, map_int simplifies the output to a vector of integers
-results <- map_int(list_of_winning_moves, function(x) is.element(unlist(x), example_moves) %>% sum() )  
-
-
 ```
 
 
