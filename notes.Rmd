@@ -107,12 +107,12 @@ evaluate_win_conditions <-function(player_1_moves, player_2_moves) {
 
 if (max(p1_results) == 3 ) {
     continue_play <- F
-    winner <- "Player_1" 
+    winner <- "Player 1" 
   } else if (max(p2_results) == 3 ){ 
     continue_play <- F
-    winner <- "Player_2" }
-   
-  if (continue_play == F) print("Congrats {winner}, you won!") 
+    winner <- "Player 2" }
+  
+ return(results <- list(continue_play, winner))  # Explicitly return and overwrite global variable
   
 }
 ```
@@ -146,6 +146,23 @@ tic_tac_toe <- function ()  {
    
    #Initialize
    continue_play <- T
+   
+   while (continue_play == T ){
+     
+      # Player 1
+      player1_inputs <- midgame_prompt(player_number = 1)
+      p1_next_move <- player1_inputs$n
+      player_1_moves <- append(player_1_moves, p1_next_move)
+   
+      plot_board(player_1_moves, player_2_moves)
+   
+      evaluate_win_conditions(player_1_moves, player_2_moves) 
+      
+      if () {
+        
+      }
+     
+   }
       
       # Player 1
       player1_inputs <- midgame_prompt(player_number = 1)
