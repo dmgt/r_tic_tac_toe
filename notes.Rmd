@@ -206,7 +206,7 @@ tic_tac_toe <- function ()  {
        results <- list(continue_play = results$continue_play, winner =  results$winner)
       }
    
-  #### While loop with next moves by both players ####
+  #### While loop with next moves by both players, including input checking ####
    
    while (results$continue_play == T ){
      
@@ -214,12 +214,12 @@ tic_tac_toe <- function ()  {
       player1_inputs <- midgame_prompt(player_number = 1)
       
       # Check content of input, and re-prompt player from start of loop if needed
-      need_reenter <- test_numeric_move(p1_next_move <- player1_inputs$n)
-      if ( need_reenter == T ) {
-        next
-      }else if (need_reenter == F) {
-        player_1_moves <- append(player_1_moves, p1_next_move)
-      }
+           need_reenter <- test_numeric_move(p1_next_move <- player1_inputs$n)
+           if ( need_reenter == T ) {
+             next
+           }else if (need_reenter == F) {
+             player_1_moves <- append(player_1_moves, p1_next_move)
+           }
       
       plot_board(player_1_moves, player_2_moves)
    
@@ -229,8 +229,17 @@ tic_tac_toe <- function ()  {
       else {
       
       player2_inputs <- midgame_prompt(player_number = 2)
-      p2_next_move <- player2_inputs$n
-      player_2_moves <- append(player_2_moves, p2_next_move)
+      
+       # Check content of input, and re-prompt player if needed
+           need_reenter <- test_numeric_move(p2_next_move <- player2_inputs$n)
+           if ( need_reenter == T ) {
+             next
+           }else if (need_reenter == F) {
+             player_2_moves <- append(player_2_moves, p2_next_move)
+           }
+      
+      #p2_next_move <- player2_inputs$n
+      #player_2_moves <- append(player_2_moves, p2_next_move)
    
       plot_board(player_1_moves, player_2_moves)
    
@@ -239,7 +248,7 @@ tic_tac_toe <- function ()  {
       } # end of else statement
        } # end of while loop
     
-    #### End of game  - check if want to play again ###
+    #### End of game  - check if want to play again ####
    
         print(glue("Congrats, {results$winner}, you won! "))
         
@@ -273,7 +282,48 @@ tic_tac_toe <- function ()  {
   
 ```
 
+```{r}
+
+# Will writing a for loop with i in some_sequence mean 'next' works for error handling to re-prompt first user? No
+
+for (i in c(1,2)) {
+  print(glue("i is : {i}")) # i is either player 1 or 2
+  
+  input <- midgame_prompt(player_number = i)
+  
+  need_reenter <- test_numeric_move(next_move <- input$n)
+  
+  if (need_reenter == T) {
+    next
+  }else if (need_reenter == F) {
+             player_moves[[i]] <- append(player_moves[[i]], p1_next_move)
+           }
+}
+```
+
+```{r}
+
+# Is it possible to write a for loop where there is only 1 entry in the sequence?
+for (i in 1) {
+  print(glue("i is : {i}")) # i is either player 1 or 2
+  
+  input <- midgame_prompt(player_number = i)
+  
+  need_reenter <- test_numeric_move(next_move <- input$n)
+  
+  if (need_reenter == T) {
+    next
+  }else if (need_reenter == F) {
+             player_moves[[i]] <- append(player_moves[[i]], p1_next_move)
+           }
+  }
+
+```
+
+
 ## Interim notes
+
+- R error and warning handling is canonically through `tryCatch`, which I have not used before:  see https://advanced-r-solutions.rbind.io/conditions.html#signalling-conditions,  https://stackoverflow.com/questions/8093914/use-trycatch-skip-to-next-value-of-loop-upon-error , 
 
 _ Lists in R *are * ordered, even though they can also be named - good writeup: https://stackoverflow.com/questions/2050790/how-to-correctly-use-lists-in-r 
 - R base set operations are set up to work on vectors
@@ -283,8 +333,13 @@ _ Lists in R *are * ordered, even though they can also be named - good writeup: 
 - Can use combinat::permn to generate all permutations of a vector
 - Can use `purrr::map2()` to operate on 2 things eg "(data = DATA FOR ONE SPECIES, n = SAMPLE SIZE)", per https://jennybc.github.io/purrr-tutorial/ls12_different-sized-samples.html
 
+- Taking in input from the prompt is not a functionality I had used before in R, but it definately exists (see eg packages built to provide in-IDE tutorials from an R package such as `swirl`)
+  - https://www.datamentor.io/r-programming/examples/user-input/
+  - https://stackoverflow.com/questions/33425727/calling-user-inputs-prompted-through-one-r-function-in-a-second-r-function 
 
-## Steps and desired feautures
+- Existing R package (haven't looked at the code) https://github.com/kota7/tictactoe 
+
+## Steps and desired features
 
 - Two humans play against each other
 - A message when the function is first called: eg  "Welcome to tic tac toe! This is a game for two players. The goal is to get three x's or o's in a row!
@@ -304,18 +359,7 @@ You can take turns entering your move in this window. There are a total of 9 pos
 - Loop three steps above, evaluating win conditions at each iteration
     - There are 8 possible configurations for each player to win, which are easy to list as a set (order doesn't matter)
 
-
-## Notes
-- Taking in input from the prompt is not a functionality I have used before in R, but it definately exists (see eg packages built to provide in-IDE tutorials from an R package such as `swirl`)
-
-### R features
-- https://www.datamentor.io/r-programming/examples/user-input/
-- https://stackoverflow.com/questions/33425727/calling-user-inputs-prompted-through-one-r-function-in-a-second-r-function 
-
-- Existing R package (haven't looked at the code) https://github.com/kota7/tictactoe 
-- Implementation that includes a way to code  grid to plot: https://www.robert-hickman.eu/post/r-inforcement_learning_one/ 
-
-### Tic tac toe and deadling with user input in other languages
+### Tic tac toe and dealing with user input in other languages
 - https://towardsdatascience.com/tic-tac-toe-creating-unbeatable-ai-with-minimax-algorithm-8af9e52c1e7d
 - https://stackoverflow.com/questions/23294658/asking-the-user-for-input-until-they-give-a-valid-response
 
