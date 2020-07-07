@@ -201,10 +201,9 @@ tic_tac_toe <- function ()  {
     
     #### End of game  - check if want to play again ###
    
-        print(glue("Congrats, {results[[2]]}, you won! "))
+        print(glue("Congrats, {results$winner}, you won! "))
         
          yes_no <- play_again_prompt()
-  
          yes_no_choice <- yes_no$c
          
          if(yes_no_choice %in% c("N","n")) {
@@ -213,8 +212,22 @@ tic_tac_toe <- function ()  {
           
            } else if(yes_no_choice %in% c("Y","y")) {
              
-             tic_tac_toe() }
-   
+             tic_tac_toe()
+             
+           } else {print(glue("Sorry, '{yes_no_choice}' is not a valid input"))
+             
+                # Repeat choices above
+                yes_no <- play_again_prompt()
+                yes_no_choice <- yes_no$c
+                
+                if(yes_no_choice %in% c("N","n")) {
+                  print(glue("Game over"))
+                  } else if(yes_no_choice %in% c("Y","y")) {
+                    tic_tac_toe()
+                  } else {print(glue("Sorry, this doesn't seem to be working out. Game over."))}
+                    
+            } # End of else statement
+             
         } # End of function
      
   
