@@ -137,7 +137,8 @@ tic_tac_toe <- function ()  {
    #### First move by player 1 ####
    inputs <- initial_prompt() # Trigger text input prompt
   
-   player_1_moves <- inputs$n # Extract value from text input prompt
+   p1_next_move <- inputs$n # Extract value from text input prompt
+   player_1_moves <- append(player_1_moves, p1_next_move)
    
    plot_board(player_1_moves, player_2_moves) 
    
@@ -145,7 +146,8 @@ tic_tac_toe <- function ()  {
    #### First move by player 2 ####
    inputs2 <- player2_initial_prompt()
    
-   player_2_moves <- inputs2$n
+   p2_next_move <- inputs2$n
+   player_2_moves <- append(player_2_moves, p2_next_move)
    
    plot_board(player_1_moves, player_2_moves)
    
