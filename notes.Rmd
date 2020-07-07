@@ -39,7 +39,7 @@ initial_prompt <- function()  {
                         
   print(glue("
              
-             Player 1 will go first. Your plays will use the 'x' symbol on the board. Player 2 is 'o'.
+               Player 1 will go first. Your plays will use the 'x' symbol on the board. Player 2 is 'o'.
              
              "))
                      
@@ -112,7 +112,7 @@ if (max(p1_results) == 3 ) {
     continue_play <- F
     winner <- "Player 2" }
   
- return(results <- list(continue_play, winner))  # Explicitly return and overwrite global variable
+ results <- list(continue_play, winner)
   
 }
 ```
@@ -134,6 +134,7 @@ tic_tac_toe <- function ()  {
    
    plot_board(player_1_moves, player_2_moves)
    
+   
    #### First move by player 2 ####
    inputs2 <- player2_initial_prompt()
    
@@ -144,10 +145,10 @@ tic_tac_toe <- function ()  {
    
    #### Loop with next moves by both players ####
    
-   #Initialize
-   continue_play <- T
+   #Initialize - list of 1) Variable if play shoul continue, 2) Character string of winner
+   results <- list(T, NA)
    
-   while (continue_play == T ){
+   while (results[[1]] == T ){
      
       # Player 1
       player1_inputs <- midgame_prompt(player_number = 1)
@@ -156,13 +157,30 @@ tic_tac_toe <- function ()  {
    
       plot_board(player_1_moves, player_2_moves)
    
-      evaluate_win_conditions(player_1_moves, player_2_moves) 
+      results <- evaluate_win_conditions(player_1_moves, player_2_moves) 
       
-      if () {
+      if (results[[1]] == F) { break }
+      else {
+      
+      player2_inputs <- midgame_prompt(player_number = 2)
+      p2_next_move <- player2_inputs$n
+      player_2_moves <- append(player_2_moves, p2_next_move)
+   
+      plot_board(player_1_moves, player_2_moves)
+   
+      results <- evaluate_win_conditions(player_1_moves, player_2_moves)
         
-      }
+      } # end of else statement
+       } # end of while loop
+   
+        print(glue("
+        
+                   Congrats, {results[[2]]}, you won!
+                   "))
+   
+        } # End of function
      
-   }
+   
       
       # Player 1
       player1_inputs <- midgame_prompt(player_number = 1)
