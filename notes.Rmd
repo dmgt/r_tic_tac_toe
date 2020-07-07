@@ -39,7 +39,7 @@ initial_prompt <- function()  {
                         
   print(glue("
              
-               Player 1 will go first. Your plays will use the 'x' symbol on the board. Player 2 is 'o'.
+                          Player 1 will go first. Your plays will use the 'x' symbol on the board. Player 2 is 'o'.
              
              "))
                      
@@ -51,17 +51,14 @@ initial_prompt <- function()  {
 }
 
  player2_initial_prompt <- function(){
-    n <- (readline("
-    Nice! Player 1, your 'x' is now on the board. 
-                   
-    Player 2, it's time for your first move with 'o'. Please enter a number from 1-9: "))
+    n <- (readline("Player 2, it's time for your first move with 'o', please enter a number from 1-9: "))
     n <- as.numeric(n)
   
   list(n=n)
  }
  
 midgame_prompt <- function(player_number){
-    n <- (readline(glue("Player {player_number}, what is your next move? Please enter a number from 1-9: ")))
+    n <- (readline(glue("Player {player_number}, your turn. Please enter a number from 1-9: ")))
     n <- as.numeric(n)
   
   list(n=n)
@@ -115,6 +112,13 @@ if (max(p1_results) == 3 ) {
  results <- list(continue_play, winner)
   
 }
+
+play_again_prompt <- function() {
+    c <- (readline(glue("Would you like to play again? Please enter Y for 'Yes' or N for 'No': ")))
+    c <- as.character(c)
+  
+  list(c = c)
+}  
 ```
 
  
@@ -177,79 +181,25 @@ tic_tac_toe <- function ()  {
         
                    Congrats, {results[[2]]}, you won!
                    "))
+        
+         yes_no <- play_again_prompt()
+  
+         yes_no_choice <- yes_no$c
+         
+         if(yes_no_choice %in% c("N","n")) {
+           
+           print(glue("Game over"))
+          
+           } else if(yes_no_choice %in% c("Y","y")) {
+             
+             print(glue("Let's play again!"))
+             
+             tic_tac_toe() }
+
    
         } # End of function
      
-   
-      
-      # Player 1
-      player1_inputs <- midgame_prompt(player_number = 1)
-   
-      p1_next_move <- player1_inputs$n
-
-      player_1_moves <- append(player_1_moves, p1_next_move)
-   
-      plot_board(player_1_moves, player_2_moves)
-   
-      evaluate_win_conditions(player_1_moves, player_2_moves) 
-      
-      # Player 2
-      player2_inputs <- midgame_prompt(player_number = 2)
-   
-      p2_next_move <- player2_inputs$n
-
-      player_2_moves <- append(player_2_moves, p2_next_move)
-   
-      plot_board(player_1_moves, player_2_moves)
-   
-      evaluate_win_conditions(player_1_moves, player_2_moves)
-      
-      # Player 1 again
-      player1_inputs <- midgame_prompt(player_number = 1)
-   
-      p1_next_move <- player1_inputs$n
-
-      player_1_moves <- append(player_1_moves, p1_next_move)
-   
-      plot_board(player_1_moves, player_2_moves)
-   
-      evaluate_win_conditions(player_1_moves, player_2_moves) 
-      
-      # Player 2 again
-      player2_inputs <- midgame_prompt(player_number = 2)
-   
-      p2_next_move <- player2_inputs$n
-
-      player_2_moves <- append(player_2_moves, p2_next_move)
-   
-      plot_board(player_1_moves, player_2_moves)
-   
-      evaluate_win_conditions(player_1_moves, player_2_moves)
-      
-       # Player 1 again
-      player1_inputs <- midgame_prompt(player_number = 1)
-   
-      p1_next_move <- player1_inputs$n
-
-      player_1_moves <- append(player_1_moves, p1_next_move)
-   
-      plot_board(player_1_moves, player_2_moves)
-   
-      evaluate_win_conditions(player_1_moves, player_2_moves) 
-      
-      # Player 2 again
-      player2_inputs <- midgame_prompt(player_number = 2)
-   
-      p2_next_move <- player2_inputs$n
-
-      player_2_moves <- append(player_2_moves, p2_next_move)
-   
-      plot_board(player_1_moves, player_2_moves)
-   
-      evaluate_win_conditions(player_1_moves, player_2_moves)
-    
-   
-}
+  
 ```
 
 ## Interim notes
