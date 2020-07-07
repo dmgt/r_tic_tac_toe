@@ -7,9 +7,8 @@ editor_options:
 
 ```{r setup}
 library(glue)
-library(tidyverse)
+library(tidyverse) # see if can import more specific library
 ```
-
 
 ## Functions
 
@@ -27,17 +26,20 @@ initial_prompt <- function()  {
                                                                      
              Welcome to tic-tac-toe!
              
-             This is a game for two players. The goal is to get three x's or o's in a row on the board!
+             This is a game for two players. The goal is to get three x's or o's in a row on the board 
+             (in any order - horizontal, vertical, or diagonal)
 
-             You can take turns entering your move in this window. 
-             There are a total of 9 positions on the board, as shown below:
+             You can take turns entering your move at this prompt. 
+             There are a total of 9 positions on the board, each indicated with a number, as shown below:
              
              ")) 
         
                 
              plot_board(player_1_moves, player_2_moves)
                         
-  print(glue("Player 1 will go first. Your plays will use the 'x' symbol. Player 2 is 'o'.
+  print(glue("
+             
+             Player 1 will go first. Your plays will use the 'x' symbol on the board. Player 2 is 'o'.
              
              "))
                      
@@ -49,7 +51,10 @@ initial_prompt <- function()  {
 }
 
  player2_initial_prompt <- function(){
-    n <- (readline("Player 2, it's time for your first move. Please enter a number from 1-9: "))
+    n <- (readline("
+    Nice! Player 1, your 'x' is now on the board. 
+                   
+    Player 2, it's time for your first move with 'o'. Please enter a number from 1-9: "))
     n <- as.numeric(n)
   
   list(n=n)
@@ -87,6 +92,31 @@ plot_board <- function(player_1_moves, player_2_moves ) {
 }
 ```
 
+```{r}
+evaluate_win_conditions <-function(player_1_moves, player_2_moves) {
+  
+  # Starting condition (will switch to F when one player has won game)
+  continue_play <- T
+
+  #Enumerate winning combinations of positions (as sets where elements can occur in any order)
+  list_of_winning_moves <- list(c(1,2,3), c(4,5,6), c(7,8,9), c(1,4,7), c(2,5,8), c(3,6,9), c(1,5,9), c(3,5,7))
+  
+  # Map return a list, map_int simplifies the output to a vector of integers
+  p1_results <- map_int(list_of_winning_moves, function(x) is.element(unlist(x), player_1_moves) %>% sum() )  
+  p2_results <- map_int(list_of_winning_moves, function(x) is.element(unlist(x), player_2_moves) %>% sum() ) 
+
+if (max(p1_results) == 3 ) {
+    continue_play <- F
+    winner <- "Player_1" 
+  } else if (max(p2_results) == 3 ){ 
+    continue_play <- F
+    winner <- "Player_2" }
+   
+  if (continue_play == F) print("Congrats {winner}, you won!") 
+  
+}
+```
+
  
 ```{r}
 
@@ -116,7 +146,8 @@ tic_tac_toe <- function ()  {
    
    #Initialize
    continue_play <- T
-     
+      
+      # Player 1
       player1_inputs <- midgame_prompt(player_number = 1)
    
       p1_next_move <- player1_inputs$n
@@ -127,6 +158,51 @@ tic_tac_toe <- function ()  {
    
       evaluate_win_conditions(player_1_moves, player_2_moves) 
       
+      # Player 2
+      player2_inputs <- midgame_prompt(player_number = 2)
+   
+      p2_next_move <- player2_inputs$n
+
+      player_2_moves <- append(player_2_moves, p2_next_move)
+   
+      plot_board(player_1_moves, player_2_moves)
+   
+      evaluate_win_conditions(player_1_moves, player_2_moves)
+      
+      # Player 1 again
+      player1_inputs <- midgame_prompt(player_number = 1)
+   
+      p1_next_move <- player1_inputs$n
+
+      player_1_moves <- append(player_1_moves, p1_next_move)
+   
+      plot_board(player_1_moves, player_2_moves)
+   
+      evaluate_win_conditions(player_1_moves, player_2_moves) 
+      
+      # Player 2 again
+      player2_inputs <- midgame_prompt(player_number = 2)
+   
+      p2_next_move <- player2_inputs$n
+
+      player_2_moves <- append(player_2_moves, p2_next_move)
+   
+      plot_board(player_1_moves, player_2_moves)
+   
+      evaluate_win_conditions(player_1_moves, player_2_moves)
+      
+       # Player 1 again
+      player1_inputs <- midgame_prompt(player_number = 1)
+   
+      p1_next_move <- player1_inputs$n
+
+      player_1_moves <- append(player_1_moves, p1_next_move)
+   
+      plot_board(player_1_moves, player_2_moves)
+   
+      evaluate_win_conditions(player_1_moves, player_2_moves) 
+      
+      # Player 2 again
       player2_inputs <- midgame_prompt(player_number = 2)
    
       p2_next_move <- player2_inputs$n
@@ -141,32 +217,7 @@ tic_tac_toe <- function ()  {
 }
 ```
 
-
-```{r}
-evaluate_win_conditions <-function(player_1_moves, player_2_moves) {
-  
-  # Starting condition
-  continue_play <- T
-
-  #Enumerate winning combinations of positions
-  list_of_winning_moves <- list(c(1,2,3), c(4,5,6), c(7,8,9), c(1,4,7), c(2,5,8), c(3,6,9), c(1,5,9), c(3,5,7))
-  
-  # Map return a list, map_int simplifies the output to a vector of integers
-  p1_results <- map_int(list_of_winning_moves, function(x) is.element(unlist(x), player_1_moves) %>% sum() )  
-  p2_results <- map_int(list_of_winning_moves, function(x) is.element(unlist(x), player_2_moves) %>% sum() ) 
-
-if (max(p1_results) == 3 ) {
-    continue_play <- F
-    winner <- "Player_1" 
-  } else if (max(p2_results) == 3 ){ 
-    continue_play <- F
-    winner <- "Player_2" }
-   
-  if (continue_play == F) print("Congrats {winner}, you won!") 
-  
-}
-```
-
+## Interim notes
 
 _ Lists in R *are * ordered, even though they can also be named - good writeup: https://stackoverflow.com/questions/2050790/how-to-correctly-use-lists-in-r 
 - R base set operations are set up to work on vectors
