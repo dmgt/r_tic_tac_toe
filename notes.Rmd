@@ -124,7 +124,39 @@ play_again_prompt <- function() {
 }  
 ```
 
+```{r}
+# Function to check if input is numeric and has not been called already
+
+test_numeric_move <- function(next_move) {
+  
+  # First check if input is numeric and 1 - 9
+  if (next_move %in% c(1,2,3,4,5,6,7,8,9)) { 
+    need_reenter1 <- F
+  } else { 
+      need_reenter1 <- T
+      print(glue("It looks like you entered '{next_move}', which is not a position on the board.
+                    Please try again and enter a whole number between 1 and 9"))
+        }
+  
+  # Second, check if the numeric value has already been played elsewhere on the board (numbers can't overlap)
+  if (next_move %in% player_1_moves | next_move %in% player_1_moves) {
+      need_reenter2 <- T
+      print(glue("Hmm, you entered '{next_move}', but someone has already used that spot on the board
+                    Please try again and enter a position on the board that is still avalible"))
+  } else { 
+    need_reenter2 <- F 
+  }
+  
+  # If either condition failed, need to prompt player to re-enter
+  need_reenter <- ifelse(need_reenter1 == T | need_reenter2 == T, T, F)
+  
+  
+  
+}
+
+```
  
+
 ```{r}
 
 tic_tac_toe <- function ()  {
@@ -180,12 +212,18 @@ tic_tac_toe <- function ()  {
      
       # Player 1
       player1_inputs <- midgame_prompt(player_number = 1)
-      p1_next_move <- player1_inputs$n
-      player_1_moves <- append(player_1_moves, p1_next_move)
-   
+      
+      # Check content of input, and re-prompt player from start of loop if needed
+      need_reenter <- test_numeric_move(p1_next_move <- player1_inputs$n)
+      if ( need_reenter == T ) {
+        next
+      }else if (need_reenter == F) {
+        player_1_moves <- append(player_1_moves, p1_next_move)
+      }
+      
       plot_board(player_1_moves, player_2_moves)
    
-      results <- evaluate_win_conditions(player_1_moves, player_2_moves) 
+      results <- evaluate_win_conditions(player_1_moves, player_2_moves) # Check if either player has won yet
       
       if (results$continue_play == F) { break }
       else {
