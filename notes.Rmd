@@ -164,10 +164,11 @@ tic_tac_toe <- function ()  {
                         Please try again and enter a number between 1 and 9"))
       }
     
-    # Second check if input is within range 1 - 9, for inputs that are numeric (not NA)
-      if (is.na(next_move) == F & next_move %in% c(1,2,3,4,5,6,7,8,9)) { 
+    # Second, check if input is within range 1 - 9, for inputs that are numeric (not NA)
+      if (next_move %in% c(1,2,3,4,5,6,7,8,9)) { 
         error2 <- F
-      } else { 
+      } else if (is.na(next_move)){ error2 <- T # no additional message, given message above
+      } else {
           error2 <- T
           print(glue("Sorry, you entered '{next_move}', which is not a position on the board.
                         Please try again and enter a number between 1 and 9 that hasn't been played yet"))
