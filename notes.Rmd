@@ -205,7 +205,11 @@ tic_tac_toe <- function ()  {
           results$winner <- "Player 1" 
         } else if (max(p2_results) == 3 ){ 
           results$continue_play <- F
-          results$winner <- "Player 2" }
+          results$winner <- "Player 2" 
+        } else if ( length(player_1_moves) + length(player_2_moves) == 9 ){
+          results$continue_play <- F
+          results$winner <- "both of you, you tied, so to both Player 1 and Player 2" 
+        }
         
        results <- list(continue_play = results$continue_play, winner =  results$winner)
       }
