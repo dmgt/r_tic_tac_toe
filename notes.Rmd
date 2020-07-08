@@ -7,6 +7,8 @@ editor_options:
 
 ## Notes
 
+- Sourcing function without `here`: `source('~/3_Professional/Applying/6_code/r_tic_tac_toe/tic_tac_toe.R')`
+
 - R error and warning handling is canonically through `tryCatch`, see https://advanced-r-solutions.rbind.io/conditions.html#signalling-conditions, http://mazamascience.com/WorkingWithData/?p=912,  https://stackoverflow.com/questions/8093914/use-trycatch-skip-to-next-value-of-loop-upon-error , 
 
 - Lists in R *are * ordered, even though they can also be named - good writeup: https://stackoverflow.com/questions/2050790/how-to-correctly-use-lists-in-r 
