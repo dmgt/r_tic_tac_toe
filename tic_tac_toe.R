@@ -250,7 +250,7 @@ tic_tac_toe <- function ()  {
     } else if (max(p2_results) == 3 ){ 
       results$continue_play <- F
       results$winner <- "Player 2" 
-    } else if ( length(player_1_moves) + length(player_2_moves) == 9 ){
+    } else if ( length(player_1_moves) + length(player_2_moves) == 9 ){  # tie game if board full and neither player wins
       results$continue_play <- F
       results$winner <- "both of you, you tied, so to both Player 1 and Player 2" 
     }
