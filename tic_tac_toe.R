@@ -130,12 +130,17 @@ plot_board <- function(player_1_moves, player_2_moves ) {
   
   board_elements <- glue_collapse(board_numbers, sep = " | ")
   
-                                                                 #regex search + replace
+                                                                 
   board_lines <- gsub(pattern = "(. \\| . \\| . )\\|( . \\| . \\| . )\\|( . \\| . \\| .)", 
-                      replacement = "\n \\1\n-----------\n\\2\n-----------\n\\3",
-                      x = board_elements)
-  
-  return(writeLines(board_lines))
+                      replacement = "\n \\1\n-----------\n\\2\n-----------\n\\3",  # Add horizontal lines
+                      x = board_elements) 
+  # Notes on how this regex works - first line searches for three different groups of characters separated by '|' in input of x
+  # Second line replaces text w/ group #1, followed by newline and dotted line, group #2, followed by newlines and dottedline 
+  # ( by default w/ fixed = F can include backreferences to subexpressions  from 'pattern' indicated as `\\1`, `\\2`, `\\3`)
+  # Tidyverse equivilent is `str_replace_all`, this is base R 
+
+
+  return(writeLines(board_lines)) # needs to be writeLines and not glue to print to screen
 }
 
 ################################# Main game function #################################
@@ -160,7 +165,7 @@ tic_tac_toe <- function ()  {
   test_numeric_move <- function(next_move) {
     
     # First check if input is numeric 
-    if (is.na(next_move) == F) {   # Input is corerced to numeric in midgame_prompt, so NA if not a number
+    if (is.na(next_move) == F) {   # Input corerced to numeric when input w/ midgame_prompt(), so NA if not a #
       error1 <- F
     } else { 
       error1 <- T
@@ -188,7 +193,7 @@ tic_tac_toe <- function ()  {
     }
     
     # If either condition failed, need to prompt player to re-enter
-    need_reenter <- ifelse(error1 == T | error2 == T | error3 == T, T, F) # If either error is T, then need_reenter is T 
+    need_reenter <- ifelse(error1 == T | error2 == T | error3 == T, T, F) # If any error is T, then need_reenter is T 
   } # end of test_numeric_move      
   
   #### First move by player 1 ####
