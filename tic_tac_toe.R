@@ -12,19 +12,23 @@
   # plot_board(player_1_moves, player_2_moves)
 
 ##### Main game function
-  # tic_tac_toe
+  # tic_tac_toe()
 
 ################################# Functionality ####################################
 
-# Two people can play against each other by taking turns entering plays in the console on a shared keyboard 
-# The first round of play welcomes each player with an informative message about how to play, later rounds repeat the same prompt
-# The game board is displayed before the first round of play, numbered with 9 squares from 1 - 9 
-# The game board is updated and displayed after every play, with x's and o's representing plays by player 1 and 2 respectively
-# Sets are initialized to store moves from each player 
-# Each play entered is validated, player is re-prompted if fails tests  (numeric, within bounds, and distinct from previous plays)
-# Every play each player makes is added to their set of past plays, win conditions are independent of order of plays
-# Game can result in a win for either player or a tie, with an appropriate message to winner(s)
-# Players will be prompted if they want to play again after the end of the game
+# -Two people can play against each other by taking turns entering plays in the console on a shared keyboard 
+# - The first round of play welcomes each player with an informative message about how to play, 
+#       later rounds repeat the same prompt
+# - The game board is displayed before the first round of play, numbered with 9 squares from 1 - 9 
+# - The game board is updated and displayed after every play, with x's and o's representing plays 
+#       by player 1 and 2 respectively
+# - Sets are initialized to store moves from each player 
+# - Each play entered is validated, player is re-prompted if fails tests 
+#       (numeric, within bounds, and distinct from previous plays)
+# - Every play each player makes is added to their set of past plays, 
+#       win conditions are independent of order of plays
+# - Game can result in a win for either player or a tie, with an appropriate message to winner(s)
+# - Players will be prompted if they want to play again after the end of the game
 
 ### Not yet implemented - potential future fuctionality
 # - Optional - flip a virtual coin to decide which player goes first
@@ -34,7 +38,7 @@
 # These are all common R packages (standard packages used with the 'tidyverse' of data analysis tools)
 library(glue)  # for helpful defaults for print statements in R
 library(purrr) # For functions to map over a vector (specifically `map_int()` below)
-library(magrittr) # For 'pipe' operator ( %>% ) to specify operations from left to right w/o nested function calls
+library(magrittr) # For 'pipe' operator ( %>% ) to specify operations left to right w/o nested function calls
 
 ########################## Helper functions for user input ##########################
 
@@ -43,27 +47,26 @@ initial_prompt <- function()  {
   #    Input : none (but asks for user input at prompt)
   #    Output: List, with 1 numeric value 
 
-  #Initialize
+  #Initialize empty vectors
   player_1_moves <- c()
   player_2_moves <- c()
   
+  #using glue with print allows for formatting with line breaks and blank lines as written
   print(glue("
                                                                      
-             Welcome to tic-tac-toe!
+  Welcome to tic-tac-toe!
              
-             This is a game for two players. The goal is to get three x's or o's in a row on the board 
-             (in any order - horizontal, vertical, or diagonal)
+  This is a game for two players. The goal is to get three x's or o's in a row on the board 
+  (in any order - horizontal, vertical, or diagonal)
 
-             You can take turns entering your move at this prompt. 
-             There are a total of 9 positions on the board, each indicated with a number, as shown below:
+  You can take turns entering your move at this prompt. 
+  There are a total of 9 positions on the board, each indicated with a number, as shown below:
              
-             "))
+"))
 
   plot_board(player_1_moves, player_2_moves)
   
-  print(glue("
-             
-                          Player 1 will go first. Your plays will use the 'x' symbol on the board. Player 2 is 'o'.
+  print(glue("Player 1 will go first. Your plays will use the 'x' symbol on the board. Player 2 is 'o'.
              
              "))
   
@@ -114,22 +117,24 @@ plot_board <- function(player_1_moves, player_2_moves ) {
   # Outputs: Text output printed to console
   
   # Notes- shows all digits if player_moves is NULL 
-  # Adapted (quite a bit) from an example w/ a different represention of plays https://www.robert-hickman.eu/post/r-inforcement_learning_one/
+  # Adapted (w/ numerous changes) from an example w/ a different represention of plays 
+  # https://www.robert-hickman.eu/post/r-inforcement_learning_one/
   
   board_numbers <- c(1:9)
   
   for (i in board_numbers)
   {
-    if (i %in% player_1_moves)  board_numbers[i] <- "x"
+    if (i %in% player_1_moves)  board_numbers[i] <- "x"  #test_numeric_move() below ensures #'s can't repeat
     if (i %in% player_2_moves)  board_numbers[i] <- "o"
   }
   
   board_elements <- glue_collapse(board_numbers, sep = " | ")
   
-  board_lines <- gsub("(. \\| . \\| . )\\|( . \\| . \\| . )\\|( . \\| . \\| .)", #regex
-                      "\n \\1\n-----------\n\\2\n-----------\n\\3",
-                      board_elements
-  )
+                                                                 #regex search + replace
+  board_lines <- gsub(pattern = "(. \\| . \\| . )\\|( . \\| . \\| . )\\|( . \\| . \\| .)", 
+                      replacement = "\n \\1\n-----------\n\\2\n-----------\n\\3",
+                      x = board_elements)
+  
   return(writeLines(board_lines))
 }
 
